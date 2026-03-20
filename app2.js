@@ -9,7 +9,8 @@ function renderApp(){
       <div class="nav-section">Menu</div>
       <button class="nav-item" data-p="dashboard"  onclick="go('dashboard')"><span class="ni">📊</span>Painel</button>
       <button class="nav-item" data-p="notas"      onclick="go('notas')"><span class="ni">🧾</span>Notas Fiscais</button>
-      <button class="nav-item" data-p="layout"     onclick="go('layout')"><span class="ni">🎨</span>Editor de Layout</button>
+      <button class="nav-item" data-p="editor"     onclick="go('editor')"><span class="ni">✏️</span>Editor Visual</button>
+      <button class="nav-item" data-p="layout"     onclick="go('layout')"><span class="ni">🎨</span>Temas & Layout</button>
       <div class="nav-section">Tributário</div>
       <button class="nav-item" data-p="simulador"  onclick="go('simulador')"><span class="ni">🧮</span>Simulador Fiscal</button>
       <button class="nav-item" data-p="ir"         onclick="go('ir')"><span class="ni">📋</span>IR 2026</button>
@@ -48,6 +49,7 @@ function go(page, params={}){
     'notas':     ()=>{ title.textContent='Notas Fiscais';   rNotas(el,acts); },
     'nf-form':   ()=>{ title.textContent=nfId?'Editar Nota':'Nova Nota'; rNFForm(el,acts,params); },
     'layout':    ()=>{ title.textContent='Editor de Layout';rLayout(el,acts); },
+    'editor':    ()=>{ title.textContent='Editor Visual da Nota'; rEditorVisual(el,acts); },
     'simulador': ()=>{ title.textContent='Simulador Fiscal';rSimulador(el,acts); },
     'ir':        ()=>{ title.textContent='Simulação IR 2026';rIR(el,acts); },
     'hist':      ()=>{ title.textContent='Histórico IR';    rHist(el,acts); },
@@ -199,6 +201,7 @@ function rNFForm(el,acts,params={}){
     <button class="btn btn-ghost btn-sm" onclick="go('notas')">← Voltar</button>
     <button class="btn btn-sm" onclick="salvar(false)">💾 Salvar</button>
     <button class="btn btn-sm" onclick="abrirSimuladorModal()">🧮 Simular imposto</button>
+    <button class="btn btn-sm" onclick="abrirEditorVisual()">🎨 Editor Visual</button>
     <button class="btn btn-gold btn-sm" onclick="salvar(true)">⬇ Salvar & PDF</button>`;
 
   const tipoOpts=[
@@ -422,3 +425,11 @@ function calcSimulacao(total, tipo){
   return opcoes.sort((a,b)=>a.imposto-b.imposto);
 }
 
+
+/* Abre editor visual salvando estado atual */
+window.abrirEditorVisual = () => {
+  const nota = buildPayload();
+  nfId = nota.id;
+  upsertNota(nota);
+  go('editor');
+};
