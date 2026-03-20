@@ -17,6 +17,12 @@ function renderApp(){
       <button class="nav-item" data-p="hist"       onclick="go('hist')"><span class="ni">🕐</span>Histórico IR</button>
       <div class="nav-section">Dados</div>
       <button class="nav-item" data-p="importar"   onclick="go('importar')"><span class="ni">📥</span>Importar CSV/Excel</button>
+      <div class="nav-section">Gestão</div>
+      <button class="nav-item" data-p="clientes"   onclick="go('clientes')"><span class="ni">👥</span>Clientes</button>
+      <button class="nav-item" data-p="modelos"    onclick="go('modelos')"><span class="ni">📄</span>Modelos de nota</button>
+      <button class="nav-item" data-p="recorrentes" onclick="go('recorrentes')"><span class="ni">🔄</span>Recorrentes</button>
+      <button class="nav-item" data-p="relatorio"  onclick="go('relatorio')"><span class="ni">📈</span>Relatório fiscal</button>
+      <button class="nav-item" data-p="alertas"    onclick="go('alertas')" id="nav-alertas"><span class="ni">🔔</span>Alertas</button>
       <div class="sidebar-bottom">
         <div class="user-pill">
           <div class="avatar">💾</div>
@@ -30,6 +36,7 @@ function renderApp(){
     </div>
   </div>`;
   atualizarContador();
+  setTimeout(()=>{ const n=contarAlertas(); const el=document.getElementById('nav-alertas'); if(el&&n>0){const b=document.createElement('span');b.style.cssText='background:var(--red);color:#fff;border-radius:99px;font-size:10px;font-weight:700;padding:1px 6px;margin-left:auto';b.textContent=n;el.appendChild(b);} },100);
   go('dashboard');
 }
 
@@ -54,6 +61,11 @@ function go(page, params={}){
     'ir':        ()=>{ title.textContent='Simulação IR 2026';rIR(el,acts); },
     'hist':      ()=>{ title.textContent='Histórico IR';    rHist(el,acts); },
     'importar':  ()=>{ title.textContent='Importar Dados';  rImportar(el,acts); },
+    'clientes':  ()=>{ title.textContent='Agenda de Clientes'; rClientes(el,acts); },
+    'modelos':   ()=>{ title.textContent='Modelos de Nota'; rModelos(el,acts); },
+    'recorrentes':()=>{ title.textContent='Notas Recorrentes'; rRecorrentes(el,acts); },
+    'relatorio': ()=>{ title.textContent='Relatório Fiscal'; rRelatorio(el,acts); },
+    'alertas':   ()=>{ title.textContent='Alertas'; rAlertas(el,acts); },
   };
   (pages[page]||function(){})();
 }
@@ -171,6 +183,7 @@ window.mudarStatus=(id,s)=>{
   n.status=s; upsertNota(n);
   toast('Status atualizado!','ok');
   atualizarContador();
+  setTimeout(()=>{ const n=contarAlertas(); const el=document.getElementById('nav-alertas'); if(el&&n>0){const b=document.createElement('span');b.style.cssText='background:var(--red);color:#fff;border-radius:99px;font-size:10px;font-weight:700;padding:1px 6px;margin-left:auto';b.textContent=n;el.appendChild(b);} },100);
   const row=document.getElementById('row-'+id);
   if(row){ const badge=row.querySelector('.badge:last-of-type'); if(badge){badge.className=`badge ${statusBadge(s)}`;badge.textContent=s;} }
 };
@@ -266,7 +279,10 @@ function rNFForm(el,acts,params={}){
   </div>
 
   <div class="card">
-    <div class="sec-lbl">Cliente</div>
+    <div class="sec-lbl" style="justify-content:space-between;align-items:center">
+      <span style="display:flex;align-items:center;gap:10px">Cliente<span style="flex:1;height:.5px;background:var(--border);display:block;min-width:20px"></span></span>
+      <button class="btn btn-ghost btn-sm" style="margin-left:8px;white-space:nowrap" onclick="abrirSeletorCliente()">👥 Selecionar da agenda</button>
+    </div>
     <div class="g2">
       <div class="field"><label>Nome / Razão Social</label><input value="${esc(m.cnom||'')}" placeholder="Cliente S.A." oninput="fc('cnom',this.value)"/></div>
       <div class="field"><label>CNPJ / CPF</label><input value="${esc(m.ccnpj||'')}" placeholder="00.000.000/0001-00" oninput="fc('ccnpj',this.value)"/></div>
@@ -369,6 +385,7 @@ window.salvar=(pdf=false)=>{
   nfId=nota.id;
   const ok=upsertNota(nota);
   atualizarContador();
+  setTimeout(()=>{ const n=contarAlertas(); const el=document.getElementById('nav-alertas'); if(el&&n>0){const b=document.createElement('span');b.style.cssText='background:var(--red);color:#fff;border-radius:99px;font-size:10px;font-weight:700;padding:1px 6px;margin-left:auto';b.textContent=n;el.appendChild(b);} },100);
   if(ok!==false){
     toast('✅ Nota salva com sucesso!','ok');
     if(pdf) setTimeout(()=>abrirPDF(),300);

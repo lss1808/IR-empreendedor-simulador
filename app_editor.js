@@ -372,11 +372,33 @@ function evSelectSection(section) {
       </div>`,
 
     itens: `
-      <div style="font-size:13px;font-weight:600;margin-bottom:1rem">Tabela de itens</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:1rem">Itens / serviços</div>
       <div class="field"><label>Tamanho do cabeçalho</label>
-        <input type="range" min="8" max="16" value="${m._headerSize||10}" oninput="nfModel._headerSize=parseInt(this.value);evRenderCanvas()" style="width:100%"/>
+        <input type="range" min="8" max="16" value="${m._headerSize||10}" step="1" oninput="nfModel._headerSize=parseInt(this.value);evRenderCanvas()" style="width:100%"/>
       </div>
-      <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:6px" onclick="go('nf-form',{edit:true})">✏️ Editar itens</button>`,
+      <div class="sec-lbl" style="margin:.75rem 0 .5rem">Editar itens inline</div>
+      ${nfItems.map((it,i)=>`
+        <div style="background:var(--bg3);border-radius:var(--rs);padding:10px;margin-bottom:6px">
+          <div class="field" style="margin-bottom:6px"><label>Descrição</label>
+            <input value="${esc(it.desc||'')}" style="font-size:12px" oninput="nfItems[${i}].desc=this.value;evRenderCanvas()"/></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+            <div class="field" style="margin:0"><label>Qtd</label>
+              <input type="number" value="${it.qty||1}" min="0.01" step="any" style="font-size:12px" oninput="nfItems[${i}].qty=parseFloat(this.value)||1;nfItems[${i}].total=+(nfItems[${i}].qty*(parseFloat(nfItems[${i}].price)||0)).toFixed(2);evRenderCanvas()"/></div>
+            <div class="field" style="margin:0"><label>Unid.</label>
+              <input value="${esc(it.unit||'un')}" style="font-size:12px" oninput="nfItems[${i}].unit=this.value;evRenderCanvas()"/></div>
+            <div class="field" style="margin:0"><label>Valor unit.</label>
+              <input type="number" value="${it.price||0}" min="0" step="0.01" style="font-size:12px" oninput="nfItems[${i}].price=parseFloat(this.value)||0;nfItems[${i}].total=+(nfItems[${i}].qty*(parseFloat(nfItems[${i}].price)||0)).toFixed(2);evRenderCanvas()"/></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+            <span style="font-size:12px;color:var(--gold);font-weight:600">Total: ${fmt(it.total||0,nfModel.moeda||'BRL')}</span>
+            ${nfItems.length>1?`<button class="btn btn-danger btn-sm" style="padding:3px 8px;font-size:11px" onclick="nfItems.splice(${i},1);evRenderCanvas()">Remover</button>`:''}
+          </div>
+        </div>`).join('')}
+      <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:6px" onclick="nfItems.push({desc:'',qty:1,unit:'un',price:0,total:0});evRenderCanvas()">+ Adicionar item</button>
+      <div class="field" style="margin-top:.75rem"><label>Desconto (${nfModel.moeda||'BRL'})</label>
+        <input type="number" value="${m.desconto||0}" min="0" step="0.01" oninput="nfModel.desconto=this.value;evRenderCanvas()"/></div>
+      <div class="field"><label>Impostos / Taxas (${nfModel.moeda||'BRL'})</label>
+        <input type="number" value="${m.impostos||0}" min="0" step="0.01" oninput="nfModel.impostos=this.value;evRenderCanvas()"/></div>`,
 
     totais: `
       <div style="font-size:13px;font-weight:600;margin-bottom:1rem">Totais</div>
