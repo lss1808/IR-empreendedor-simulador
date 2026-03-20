@@ -1,0 +1,54 @@
+{
+  "name": "ir-empreendedor",
+  "version": "1.0.0",
+  "description": "Simulador de IR e Gerador de Notas Fiscais para empreendedores brasileiros",
+  "main": "electron/main.js",
+  "author": "Seu Nome",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
+    "build:all": "electron-builder --win --mac --linux"
+  },
+  "devDependencies": {
+    "electron": "^29.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "com.irempreendedor.app",
+    "productName": "IR Empreendedor",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "index.html",
+      "manifest.json",
+      "sw.js",
+      "icons/**",
+      "electron/**"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "icons/icon-512.png"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "icons/icon-512.png",
+      "category": "public.app-category.finance"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "icons/icon-512.png",
+      "category": "Finance"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}
